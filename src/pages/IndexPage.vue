@@ -34,62 +34,12 @@
       </q-table>
     </div>
 
-    <q-dialog v-model="modalForm" persistent>
-      <q-card style="min-width: 350px" class="q-pa-sm">
-        <!-- <q-card-section>
-          <div class="text-h6">Your address</div>
-        </q-card-section> -->
-
-        <q-card-section>
-          <div class="text-h6">Formulário de cadastro</div>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          <q-form
-            @submit="submitForm"
-            class="q-gutter-md"
-            greedy
-            ref="formRef"
-          >
-            <q-input
-              outlined
-              v-model="form.nome"
-              label="Nome"
-              lazy-rules
-              :rules="[ val => val && val.length > 0 || 'Campo obrigatório!']"
-            />
-
-            <q-input
-              outlined
-              v-model="form.cpf"
-              label="CPF"
-              lazy-rules
-              type="tel"
-              mask="###.###.###-##"
-              :rules="[
-                val => val && val.length > 0 || 'Campo obrigatório!',
-                val => val && val.length > 13 || 'CPF inválido!',
-              ]"
-            />
-
-            <q-input
-              outlined
-              v-model="form.dataNascimento"
-              label="Data de nascimento"
-              lazy-rules
-              type="date"
-              mask="##/##/####"
-              :rules="[ val => val && val.length > 0 || 'Campo obrigatório!']"
-            />
-          </q-form>
-        </q-card-section>
-
-        <q-card-actions align="right" class="text-primary">
-          <q-btn flat label="Cancelar" v-close-popup color="primary" />
-          <q-btn :label="form.id ? 'Atualizar' : 'Cadastrar'" color="primary" @click="handleSubmitForm" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+    <ModalPerson
+      ref="modalPersonRef"
+      v-model="showModalFormPerson"
+      :getPersons="getPersons"
+      @updateShowModalFormPerson="updateShowModalFormPersonValue"
+    />
   </q-page>
 </template>
 
@@ -98,9 +48,11 @@
   import personsService from 'src/services/persons'
   import { QTableColumn, useQuasar } from 'quasar';
 
+  import ModalPerson from 'src/components/ModalPerson.vue';
+
   const $q = useQuasar()
 
-  const { list, getById, remove, post, update } = personsService()
+  const { list, remove } = personsService()
 
   const columns: QTableColumn[] = [
     { name: 'id', label: 'ID', field: 'id', sortable: true, align: 'left' },
@@ -112,15 +64,9 @@
 
   const persons = ref([])
 
-  const modalForm = ref(false)
+  const modalPersonRef = ref()
 
-  const formRef = ref()
-  const form = ref({
-    id: null,
-    nome: '',
-    cpf: '',
-    dataNascimento: '',
-  })
+  const showModalFormPerson = ref(false)
 
   onMounted(() => {
     getPersons()
@@ -169,65 +115,16 @@
     }
   }
 
-
   const handleEditPerson = async (id: number) => {
-    try {
-      handleOpenModalNewPerson()
-      const response = await getById(id)
-      form.value = response
-    } catch(err) {
-      $q.notify({
-        message: 'Erro ao carregar usuário.',
-        icon: 'close',
-        color: 'negative'
-      })
-    }
+    modalPersonRef.value.editPerson(id)
   }
 
   const handleOpenModalNewPerson = () => {
-    modalForm.value = true
+    showModalFormPerson.value = true
   }
 
-  const resetFormFields = () => {
-    form.value = {
-      id: null,
-      nome: '',
-      cpf: '',
-      dataNascimento: '',
-    }
-  }
-
-  const handleSubmitForm = () => {
-    formRef.value?.submit()
-  }
-
-  const submitForm = async () => {
-    try {
-      if(form.value.id) {
-        await update(form.value)
-
-        $q.notify({
-          message: 'Usuário atualizado com sucesso!',
-          icon: 'check',
-          color: 'positive'
-        })
-      } else {
-        await post(form.value)
-
-        $q.notify({
-          message: 'Usuário adicionado com sucesso!',
-          icon: 'check',
-          color: 'positive'
-        })
-      }
-
-      await getPersons()
-      modalForm.value = false
-      resetFormFields()
-
-    } catch(err) {
-      console.error(err);
-    }
+  const updateShowModalFormPersonValue = (newValue: boolean) => {
+    showModalFormPerson.value = newValue;
   }
 </script>
 
