@@ -11,7 +11,7 @@
       />
 
       <q-toolbar-title>
-        Person Registration
+        Cadastro
       </q-toolbar-title>
     </q-toolbar>
   </q-header>
