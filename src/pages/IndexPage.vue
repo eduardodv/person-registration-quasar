@@ -8,7 +8,7 @@
         no-data-label="Nenhum dado encontrado"
       >
         <template v-slot:top>
-          <h2 class="text-h5">Cadastro de Pessoas</h2>
+          <h1 class="text-h5">Cadastro de Pessoas</h1>
           <q-space />
           <q-btn color="primary" label="Adicionar" @click="handleOpenModalNewPerson" />
         </template>
@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
   import { computed, onMounted, ref } from 'vue';
-  import { QTableColumn, useQuasar, date } from 'quasar';
+  import { QTableColumn, useQuasar, date, useMeta } from 'quasar';
   import personsService from 'src/services/persons'
 
   import ModalPerson from 'src/components/ModalPerson.vue';
@@ -56,6 +56,11 @@
     cpf: string
     dataNascimento: string
   }
+
+  const metaData = {
+    title: 'Home | Person registration quasar'
+  }
+  useMeta(metaData)
 
   const $q = useQuasar()
 
