@@ -2,7 +2,7 @@
   <q-page>
     <div class="q-pa-md">
       <q-table
-        :rows="persons"
+        :rows="personsFormated"
         :columns="columns"
         row-key="name"
         no-data-label="Nenhum dado encontrado"
@@ -44,11 +44,18 @@
 </template>
 
 <script setup lang="ts">
-  import { onMounted, ref } from 'vue';
+  import { computed, onMounted, ref } from 'vue';
+  import { QTableColumn, useQuasar, date } from 'quasar';
   import personsService from 'src/services/persons'
-  import { QTableColumn, useQuasar } from 'quasar';
 
   import ModalPerson from 'src/components/ModalPerson.vue';
+
+  interface DataProps {
+    id: number | null
+    nome: string
+    cpf: string
+    dataNascimento: string
+  }
 
   const $q = useQuasar()
 
@@ -72,11 +79,19 @@
     getPersons()
   })
 
+  const personsFormated = computed(() => {
+    return persons.value.map((person: DataProps) => {
+      return {
+        ...person,
+        dataNascimento: date.formatDate(person.dataNascimento, 'DD/MM/YYYY')
+      }
+    })
+  })
+
   const getPersons = async () => {
     try {
       const response = await list()
       persons.value = response
-
     } catch(err) {
       console.error(err);
       $q.notify({
