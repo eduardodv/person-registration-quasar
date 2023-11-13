@@ -141,6 +141,7 @@
 
   const handleOpenModalNewPerson = () => {
     showModalFormPerson.value = true
+    modalPersonRef.value.resetFormFields()
   }
 
   const updateShowModalFormPersonValue = (newValue: boolean) => {
