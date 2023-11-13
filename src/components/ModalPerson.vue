@@ -98,8 +98,6 @@ const editPerson = async (id: number) => {
   }
 }
 
-defineExpose({ editPerson })
-
 const handleSubmitForm = () => {
   formRef.value?.submit()
 }
@@ -137,4 +135,6 @@ const submitForm = async () => {
     })
   }
 }
+
+defineExpose({ editPerson, resetFormFields })
 </script>
