@@ -6,4 +6,11 @@
   </q-page>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+  import { useMeta } from 'quasar';
+
+  const metaData = {
+    title: 'Pedidos | Person registration quasar'
+  }
+  useMeta(metaData)
+</script>
